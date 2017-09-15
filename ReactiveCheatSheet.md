@@ -92,13 +92,18 @@ val integers = new Generator[Int] {
 }
 ```
 
-With these definition, and a basic definition of `integer` generator, we can map it to other domains like `booleans, pairs, intervals` using for-expression magic
+With these definition, and a basic definition of `integer` generator, we can map it to other domains like generating booleans or intervals, and filtering using only for-expression magic
 
 
 ```scala
-val booleans = for {x <- integers} yield x > 0
-val pairs = for {x <- integers; y<- integers} yield (x, y)
-def interval(lo: Int, hi: Int) : Generator[Int] = for { x <- integers } yield lo + x % (hi - lo)
+val booleans: Generator[Boolean] =
+  for (x <- integers) yield x > 0
+
+def interval(lo: Int, hi: Int): Generator[Int] =
+  for (x <- integers) yield lo + x % (hi - lo)
+
+def chooseOneOf[T](xs: T*): Generator[T] =
+  for { idx <- interval(0, xs.length) } yield xs(idx)
 ```
 
 
